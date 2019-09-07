@@ -1,0 +1,38 @@
+
+
+create table Departments(dept_id number, dept_name varchar2(20) , CONSTRAINT Departments_pk PRIMARY KEY (dept_id));
+
+
+create table Employees( emp_id number,CONSTRAINT Employees_pk PRIMARY KEY (emp_id), emp_name varchar2(20), 
+emp_email varchar2(20), emp_pass varchar2(20),
+ emp_desg varchar2(20) , dept_id number,constraint fk_Departments foreign key (dept_id) references Departments(dept_id) on delete cascade, emp_status number  ,
+ emp_startdate date, emp_enddate date);
+
+
+create table MOM (mom_id number, mom_name varchar2(20) , 
+mom_c_id number ,constraint fk_Employees foreign key (mom_c_id) references Employees(emp_id) on delete cascade ,mom_s_date timestamp,
+mom_pd varchar(255) , mom_disc_t varchar(255) ,CONSTRAINT MOM_pk PRIMARY KEY (mom_id)); 
+
+
+
+create table Participants( emp_id number,constraint fk_Employees foreign key(emp_id) references Employees(emp_id) on delete cascade, mom_id number,
+ meeting_time timestamp , attendance number,CONSTRAINT Participants_pk PRIMARY KEY (meeting_time)); 
+
+
+
+create table Actions(action_id number,CONSTRAINT Actions_pk PRIMARY KEY (action_id), 
+action_name varchar2(255), 
+mom_id number,constraint fk_MOM foreign key(mom_id) references MOM(mom_id) on delete cascade, 
+action_due date,emp_id number);
+
+
+
+create table Action_Status(action_id number,constraint fk_Actions foreign key(action_id) references Actions(action_id) on delete cascade, current_status varchar(255),
+action_open timestamp, action_assigned timestamp , action_WIP timestamp , action_RFC timestamp, action_closed timestamp , action_withdrawn timestamp);
+
+
+
+
+
+
+
