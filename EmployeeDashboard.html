@@ -1,4 +1,6 @@
-
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+	pageEncoding="ISO-8859-1"
+	import="java.util.*,com.quinnox.mom.dao.*,com.quinnox.mom.model.*,com.quinnox.mom.controller.*"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -24,10 +26,18 @@
 <!-- CSS Just for demo purpose, don't include it in your project -->
 <link href="assets/demo/demo.css" rel="stylesheet" />
 
-
-
-
-
+<%
+	String sid = session.getAttribute("id").toString();
+	int id = Integer.parseInt(sid);
+	ArrayList<String> momAList = new ArrayList<String>();
+	ArrayList<String> moms = new ArrayList<String>();
+	moms = MomDAO.getMomDetails(momAList, id);
+	ArrayList actionsList = new ArrayList();
+	ArrayList getList = MomDAO.getActionDetails(actionsList, id);
+	List<Actions> getActions = new ArrayList<Actions>();
+	List<Actions> storeActions = MomDAO.getActionDetailsForEmp(getActions, id);
+	ArrayList<Mom> createdMomList = MomDAO.getCreatorMom(id);
+%>
 
 <script
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
@@ -49,24 +59,13 @@ $(document).ready(function(){
 </script>
 </head>
 <body>
-	<!--
-=========================================================
-* Material Dashboard Dark Edition - v2.1.0
-=========================================================
-* Product Page: https://www.creative-tim.com/product/material-dashboard-dark
-* Copyright 2019 Creative Tim (http://www.creative-tim.com)
-* Coded by www.creative-tim.com
-=========================================================
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
--->
+
+
 <body class="dark-edition">
 	<div class="wrapper ">
 		<div class="sidebar" data-color="purple" data-background-color="black"
 			data-image="../assets/img/sidebar-2.jpg">
-			<!--
-        Tip 1: You can change the color of the sidebar using: data-color="purple | azure | green | orange | danger"
-        Tip 2: you can also add an image using data-image tag
-    -->
+		
 			<div class="logo">
 				<a href="#" class="simple-text logo-normal"> ABC Ltd. </a>
 			</div>
@@ -123,10 +122,7 @@ $(document).ready(function(){
 
             
 			<div class="content">
-                    <!-- <div>
-                            <b><p style="font-size:30px; text-align: left; color: white; margin-left: 15px;">Number Of MoMs generated: &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &nbsp; Number of Meetings Attended:</emsp> </p></b>
-                        </div>
-                         -->
+                    
 				<div class="container-fluid">
 					<div class="row">
 						<div class=" col-6">
@@ -136,15 +132,18 @@ $(document).ready(function(){
                                             <center><h4 class="card-title mt-0"> Meetings Attended</h4></center>
                                           </div>
 								<div class="card-body" >
-									<!-- <h4 class="card-title" style="text-align: center;">Meetings Attended</h4>
-									 -->
+                                        <%
+										for (String m : moms) {
+									%>
 									<table>
 										<tr>
-											<td></td>
+											<td><%=m%></td>
 										</tr>
 
 									</table>
-									
+									<%
+										}
+									%>
 								</div>
 								<div class="card-footer">
 									<div class="stats">
@@ -166,19 +165,24 @@ $(document).ready(function(){
                             <table border="1" bordercolor="white";  style="width:100%;">
                                 <th style="text-align:center;">Meeting Time</th>
                                 <th style="text-align:center;">Meeting purpose</th>
-                            
+                                <%
+											for (Mom m : createdMomList) {
+										%>
 
 
 
                                 <tr>
-                                    <td></td>
-                                    <td></td>
+                                    <td><%=m.getMom_s_date() %></td>
+                                    <td><%=m.getMom_purpose() %></td>
                                 </tr>
-
+                                <%
+											}
+										%>
                                 
                             </table>
                         </center>
                         </div>
+
                         <div class="card-footer">
                                 <div class="stats">
                                     <i class="material-icons"></i>
@@ -193,23 +197,29 @@ $(document).ready(function(){
                             <div class="card-header card-header-primary">
                                     <center><h4 class="card-title mt-0"> Action Approval</h4></center>
                                   </div>
-                 
-                        <div class="card-body">
+                       <div class="card-body">
                             <!-- <h4 class="card-title" style="text-align: center;">Action Approval</h4> -->
-                
+                               
+
+
                         <table  border="1" bordercolor="white"; >
                         <th style="text-align:center;">Action Id</th>
                         <th style="text-align:center;">Action name</th>
                         <th style="text-align:center;">Action Status </th>
                         <th style="text-align:center;"> Assigned to </th>
                         <th style="text-align:center;"> Confirm </th>
+                        <% ArrayList<Actions> aList = new ArrayList<Actions>();
+                                aList = ActionDAO.getRFCActions(id);
+                                for(Actions a : aList){
+                            %>
                         
                         
                         <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
+                                <td><%=a.getActionId() %></td>
+								<td><%=a.getActionName() %></td>
+								<td><%=a.getStatus()%></td>
+								<td><%=a.getAssignedTo()%></td>
+								
                         
                         <td>
                         
@@ -225,7 +235,7 @@ $(document).ready(function(){
                         
                         </tr>
                         
-                        
+                        <%} %>
             
                 </table>
                         </div>
@@ -238,6 +248,11 @@ $(document).ready(function(){
                         </div>
                     </div>
                 </div>
+                <% 
+                
+                ArrayList<Integer> info = new ArrayList<Integer>();
+                info = MomDAO.getUserInfo(id);
+                %>
             
 						<div class="col-6">
                             <div class="card card-chart" style="width:90%;float: right;">
@@ -245,7 +260,8 @@ $(document).ready(function(){
                                             <center><h4 class="card-title mt-0"> Actions Assigned</h4></center>
                                           </div>
 								<div class="card-body">
-									<!-- <h4 class="card-title" style="text-align: center;">Actions Assigned</h4> -->
+        
+								
 									<table  border="1" bordercolor="white"; >
 										<thead>
 											<th style="text-align:center;">Action Id</th>
@@ -260,19 +276,23 @@ $(document).ready(function(){
 
 
 										</tbody>
-										
+										<%
+											for (Actions a : storeActions)
+											{
+										%>
 
 										<tr>
 
-											<td></td>
-											<td></td>
-											<td id="sts"></td>
+												<td><%=a.getActionName()%></td>
+											<td><%=a.getActionName()%></td>
+											<td id="sts"><%=a.getStatus()%></td>
+
 
 											<td>
 
 												<form action="ChangeStatus" id="actionsForm">
 													<input type="hidden" name="aid"
-														value="" /> <select
+														value="<%=a.getActionId()%>" /> <select
 														class="mdb-select md-form" name="status">
 														<option value="" disabled selected>Choose status</option>
 														<option value="WIP">Work in progress</option>
@@ -283,7 +303,11 @@ $(document).ready(function(){
 
 											</td>
 
-										</tr>
+                                        </tr>
+                                        <%
+											}
+										%>
+
 										
 									</table>
 
@@ -312,12 +336,7 @@ $(document).ready(function(){
 				</div>
 			</div>
 			
-			<!-- <script>
-				$(document).ready(function() {
-					// Javascript method's body can be found in assets/js/demos.js
-					md.initDashboardPageCharts();
-				});
-			</script> -->
+			
 </body>
 
 </body>
